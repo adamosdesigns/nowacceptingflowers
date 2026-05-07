@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-charcoal: #0a0a0a;
+  --color-offwhite: #f5f2ed;
+  --color-cream: #e6e0d4;
+  --color-divider: #262626;
+  --color-accent: #cec7ff;
+  --color-accent-dark: #7c6fff;
+  --color-surface-dark: #171717;
+  
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-bebas: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif;
+
+  --animate-ticker: ticker 66s linear infinite;
+  --animate-ticker-reverse: ticker-reverse 66s linear infinite;
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes ticker-reverse {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+}
+
+/* Accessibility Styles */
+.acc-contrast-dark {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.acc-contrast-light {
+  background-color: white !important;
+  color: black !important;
+}
+
+.acc-desaturate {
+  filter: grayscale(1);
+}
+
+.acc-text-120 { font-size: 1.2rem; }
+.acc-text-140 { font-size: 1.4rem; }
+.acc-text-160 { font-size: 1.6rem; }
+
+.acc-lh-relaxed { line-height: 1.625; }
+.acc-lh-loose { line-height: 2; }
+
+.acc-ls-wide { letter-spacing: 0.025em; }
+.acc-ls-wider { letter-spacing: 0.05em; }
+
+.acc-links-highlight a, 
+.acc-links-highlight button {
+  text-decoration: underline 2px !important;
+  outline: 2px solid var(--color-accent) !important;
+  outline-offset: 4px;
+}
+
+.acc-font-dyslexia {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+}
+
+.acc-cursor-big * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/%3E%3Cpath d='m13 13 6 6'/%3E%3C/svg%3E"), auto !important;
+}
+
+.acc-reduce-motion *,
+.acc-reduce-motion *::before,
+.acc-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+}
+
+body {
+  background-color: var(--color-charcoal);
+  color: var(--color-offwhite);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply select-none;
+  cursor: none;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+a, button, [role="button"] {
+  cursor: none;
+}
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: #000;
+}
+
+html {
+  scroll-behavior: smooth;
+}
