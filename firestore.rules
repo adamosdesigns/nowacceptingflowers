@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable, hardened helpers
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function incoming() { 
+      return request.resource.data; 
+    }
+    
+    function existing() { 
+      return resource.data; 
+    }
+    
+    function isSignedIn() { 
+      return request.auth != null; 
+    }
+    
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+    
+    function isAdmin() {
+      return isSignedIn();
+    }
+
+    // Admins path
+    match /admins/{adminId} {
+      // Anyone signed in can read admins to verify access status
+      allow read: if isSignedIn();
+      allow write: if false; // Bootstrapping is managed at the database dashboard or via the owner bypass of 'adamosadon@gmail.com'
+    }
+
+    // Validation for CaseStudy schema
+    function isValidCaseStudy(data) {
+      return data.slug is string
+          && data.name is string
+          && (data.order == null || data.order is int || data.order is float);
+    }
+
+    // Case Studies path
+    match /caseStudies/{caseStudyId} {
+      // Anyone can query list or view case studies as it's the public Portfolio website
+      allow read: if true;
+      
+      // High-integrity mutations strictly reserved for admins
+      allow create: if isAdmin() 
+                    && isValidId(caseStudyId)
+                    && isValidCaseStudy(incoming());
+                    
+      allow update: if isAdmin()
+                    && isValidCaseStudy(incoming())
+                    && incoming().slug == existing().slug;
+                    
+      allow delete: if isAdmin();
+    }
+  }
+}

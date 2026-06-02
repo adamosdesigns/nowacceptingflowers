@@ -52,8 +52,8 @@ export function Cursor() {
     <motion.div
       className="fixed top-0 left-0 w-8 h-8 pointer-events-none z-[9999] mix-blend-difference"
       style={{
-        x: cursorX,
-        y: cursorY,
+        x: mouseX,
+        y: mouseY,
       }}
     >
       <motion.div
@@ -68,17 +68,19 @@ export function Cursor() {
           {cursorType === 'play' && (
             <motion.div
               key="play-icon"
+              className="w-full h-full flex items-center justify-center"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
               transition={{ duration: 0.15 }}
             >
-              <Play size={12} fill="currentColor" className="text-black ml-0.5" />
+              <Play size={11} fill="currentColor" className="text-black ml-[2px]" />
             </motion.div>
           )}
           {cursorType === 'eye' && (
             <motion.div
               key="eye-icon"
+              className="w-full h-full flex items-center justify-center"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}

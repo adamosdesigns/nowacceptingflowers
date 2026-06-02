@@ -1,0 +1,77 @@
+{
+  "entities": {
+    "caseStudy": {
+      "title": "CaseStudy",
+      "description": "Represents a dynamic case study shown in the portfolio.",
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "description": "The unique URL-friendly slice"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the client/brand"
+        },
+        "industry": {
+          "type": "string",
+          "description": "The industry description"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the project"
+        },
+        "thumbnail": {
+          "type": "string",
+          "description": "Image URL for the thumb"
+        },
+        "sections": {
+          "type": "array",
+          "description": "List of sections details"
+        },
+        "order": {
+          "type": "integer",
+          "description": "The displaying order"
+        }
+      },
+      "required": [
+        "slug",
+        "name",
+        "industry",
+        "description",
+        "thumbnail",
+        "order",
+        "sections"
+      ]
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "Represents user administrator details.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Admin user's email"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": [
+        "email"
+      ]
+    }
+  },
+  "firestore": {
+    "caseStudies/{caseStudyId}": {
+      "schema": "caseStudy",
+      "description": "Collection of all dynamic portfolio case studies"
+    },
+    "admins/{adminId}": {
+      "schema": "admin",
+      "description": "Collection of authorized CMS administrators"
+    }
+  }
+}

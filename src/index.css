@@ -13,8 +13,8 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-bebas: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif;
 
-  --animate-ticker: ticker 66s linear infinite;
-  --animate-ticker-reverse: ticker-reverse 66s linear infinite;
+  --animate-ticker: ticker 82.5s linear infinite;
+  --animate-ticker-reverse: ticker-reverse 82.5s linear infinite;
 
   @keyframes ticker {
     0% { transform: translateX(0); }

@@ -15,7 +15,7 @@ export function Layout() {
       <Navbar />
       <main className={cn(
         "flex-grow",
-        isApplyPage ? "pt-[74px] pb-0" : "pt-[74px] pb-24"
+        isApplyPage ? "pt-[88px] lg:pt-[116px] pb-0" : "pt-[88px] lg:pt-[116px]"
       )}>
         <Outlet />
       </main>
