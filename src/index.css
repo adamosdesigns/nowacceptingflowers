@@ -81,7 +81,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   @apply select-none;
-  cursor: none;
 }
 
 @layer utilities {
@@ -90,8 +89,27 @@ body {
   }
 }
 
-a, button, [role="button"] {
-  cursor: none;
+/* Ensure default cursors are hidden ONLY on hover-capable desktop screens */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  a, button, [role="button"] {
+    cursor: none;
+  }
+}
+
+/* Force standard, natural cursor behaviors on touch, tablet, and mobile screens */
+@media (hover: none), (pointer: coarse) {
+  html, body, div, span, p, h1, h2, h3, h4, h5, h6, section, header, footer, main, aside, article, details, summary, figcaption, figure {
+    cursor: auto !important;
+  }
+  a, button, [role="button"], select, label, [type="button"], [type="submit"], svg, path {
+    cursor: pointer !important;
+  }
+  input, textarea {
+    cursor: text !important;
+  }
 }
 
 img {

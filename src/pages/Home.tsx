@@ -154,17 +154,8 @@ export function Home() {
       </section>
 
 
-      {/* Brand Ticker - Single Row, Slow */}
-      <section className="py-[48px] border-t border-b border-divider bg-charcoal overflow-hidden w-full">
-        <div className="mix-blend-plus-lighter">
-           <div className="flex w-max animate-ticker items-center text-4xl md:text-5xl font-bebas uppercase tracking-wide opacity-30 whitespace-nowrap">
-             {"COLGATE • DURACELL • TINDER • F1 • FANATICS • CASPER • WALMART • PROCTOR AND GAMBLE • SONY MUSIC • FIRST REPUBLIC BANK • BELKIN • FANDANGO • OVHCLOUD • FEED THE CHILDREN • FORD • ".repeat(4)}
-           </div>
-        </div>
-      </section>
-
        {/* 4. Featured Case Studies */}
-      <section id="case-studies" className="py-20 md:py-[120px] px-6 md:px-[48px] scroll-mt-[89px] sm:scroll-mt-[117px]">
+      <section id="case-studies" className="border-t border-divider py-20 md:py-[120px] px-6 md:px-[48px] scroll-mt-[89px] sm:scroll-mt-[117px]">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div className="w-full">
