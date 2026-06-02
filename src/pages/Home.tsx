@@ -155,7 +155,7 @@ export function Home() {
 
 
        {/* 4. Featured Case Studies */}
-      <section id="case-studies" className="border-t border-divider py-20 md:py-[120px] px-6 md:px-[48px] scroll-mt-[89px] sm:scroll-mt-[117px]">
+      <section id="case-studies" className="border-t border-divider py-20 md:py-[120px] px-6 md:px-[48px] scroll-mt-[88px] sm:scroll-mt-[100px]">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div className="w-full">

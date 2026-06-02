@@ -95,7 +95,7 @@ export function ContactForm() {
 
   const scrollToForm = () => {
     if (formRef.current) {
-      const offset = 100; // Adjusted for sticky header
+      const offset = window.innerWidth >= 640 ? 100 : 88; // Adjusted for responsive sticky header
       const elementPosition = formRef.current.getBoundingClientRect().top + window.scrollY;
       const offsetPosition = elementPosition - offset;
 

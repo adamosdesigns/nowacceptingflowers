@@ -101,7 +101,7 @@ export function Footer() {
   return (
     <footer className="w-full bg-charcoal border-t border-divider">
       {/* 9. Final CTA Section */}
-      <section id="inquiry" className="px-6 lg:px-[48px] border-b border-divider py-20 lg:py-[120px] scroll-mt-[89px] sm:scroll-mt-[117px]">
+      <section id="inquiry" className="px-6 lg:px-[48px] border-b border-divider py-20 lg:py-[120px] scroll-mt-[88px] sm:scroll-mt-[100px]">
         <div className="container mx-auto">
           <div className="flex flex-col items-center text-center">
             <div className="max-w-4xl text-center">
