@@ -5,7 +5,7 @@ import { cn } from "../lib/utils";
 
 interface PhotographyCarouselProps {
   mediaUrl: string;
-  aspectRatio: "16:9" | "9:16" | "1:1";
+  aspectRatio: "16:9" | "9:16" | "1:1" | "4:5";
   alt: string;
 }
 
@@ -93,6 +93,8 @@ export function PhotographyCarousel({ mediaUrl, aspectRatio, alt }: PhotographyC
     aspectClass = "aspect-square";
   } else if (aspectRatio === "16:9") {
     aspectClass = "aspect-[16/9]";
+  } else if (aspectRatio === "4:5") {
+    aspectClass = "aspect-[4/5]";
   }
 
   // Animation variants representing sleek swipe & fades
@@ -124,7 +126,7 @@ export function PhotographyCarousel({ mediaUrl, aspectRatio, alt }: PhotographyC
   };
 
   return (
-    <div className={cn("relative w-full h-full overflow-hidden group select-none bg-[#030303]", aspectClass)}>
+    <div className="relative w-full h-full overflow-hidden group select-none bg-[#030303]">
       {/* Slides View Container */}
       <div className="absolute inset-0">
         <AnimatePresence initial={false} custom={direction} mode="wait">

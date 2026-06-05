@@ -27,6 +27,22 @@ function cleanAndExtractMediaUrl(url: string): string {
   return target.trim();
 }
 
+function getFirstPhotoOrUrl(url: string): string {
+  if (!url) return "";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed[0];
+      }
+    } catch (e) {
+      return trimmed;
+    }
+  }
+  return trimmed;
+}
+
 function getInstagramEmbedUrl(url: string) {
   if (!url) return "";
   
@@ -131,7 +147,7 @@ function getUnmutedVideoEmbedUrl(url: string) {
 
 export function CaseStudy() {
   const { slug } = useParams();
-  const { caseStudies } = useCms();
+  const { caseStudies, loading } = useCms();
   const [searchParams, setSearchParams] = useSearchParams();
   
   const study = caseStudies.find(c => c.slug === slug);
@@ -171,13 +187,101 @@ export function CaseStudy() {
     }
   }, [activeVideo]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-charcoal flex flex-col items-center justify-center text-center p-6 text-offwhite selection:bg-accent selection:text-charcoal">
+        <div className="flex flex-col items-center max-w-sm gap-6">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
+            className="w-16 h-16"
+          >
+            <svg viewBox="0 0 256 256" className="w-full h-full">
+              <g transform="translate(128, 128)">
+                <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" />
+                <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(72)" />
+                <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(144)" />
+                <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(216)" />
+                <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(288)" />
+                <circle cx="0" cy="0" r="48" fill="#8E97E8" />
+              </g>
+            </svg>
+          </motion.div>
+          <div className="space-y-2">
+            <h2 className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent font-bold animate-pulse">
+              Nurturing the Digital Greenhouse
+            </h2>
+            <p className="text-xs text-offwhite/40 tracking-wider">
+              Gathering visual assets and layout designs...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!study) {
     return (
-      <div className="min-h-screen flex items-center justify-start container mx-auto px-6">
-        <div className="text-left">
-          <h1 className="text-4xl font-bebas uppercase tracking-normal mb-4">Case study not found</h1>
-          <Link to="/portfolio" className="text-accent uppercase tracking-widest text-xs hover:underline">Return to Portfolio</Link>
-        </div>
+      <div className="min-h-screen bg-charcoal flex flex-col items-center justify-center text-center p-6 text-offwhite selection:bg-accent selection:text-charcoal">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col items-center max-w-md gap-8"
+        >
+          {/* Standing Flower Pot/Stem Minimalist Illustration */}
+          <div className="relative w-24 h-24 flex items-center justify-center">
+            <motion.div
+              animate={{ 
+                scale: [1, 1.05, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              className="w-16 h-16"
+            >
+              <svg viewBox="0 0 256 256" className="w-full h-full">
+                <g transform="translate(128, 128)">
+                  <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" />
+                  <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(72)" />
+                  <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(144)" />
+                  <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(216)" />
+                  <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(288)" />
+                  <circle cx="0" cy="0" r="48" fill="#8E97E8" />
+                </g>
+              </svg>
+            </motion.div>
+            
+            {/* Subtle sparkling elements */}
+            <motion.div 
+              animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+              transition={{ repeat: Infinity, duration: 3, delay: 0.5 }}
+              className="absolute top-1 right-2 text-accent"
+            >
+              <Sparkles className="w-4 h-4" />
+            </motion.div>
+          </div>
+
+          <div className="space-y-4">
+            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent font-bold block">
+              Sprouting in the Greenhouse
+            </span>
+            <h1 className="text-4xl md:text-5xl font-bebas uppercase tracking-wide text-offwhite leading-[0.9]">
+              A Budding Concept is Unfolding
+            </h1>
+            <p className="text-sm text-offwhite/60 font-sans font-light leading-relaxed max-w-sm mx-auto text-balance">
+              Our digital greenhouse is still cultivating this specific showcase. If this petal is taking a moment to bloom, feel free to wander back and explore our fully-grown gallery garden.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <Link 
+              to="/portfolio" 
+              className="inline-flex items-center gap-2 bg-accent text-charcoal px-8 py-4 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-white hover:text-charcoal transition-all duration-300 group"
+            >
+              Explore the Project Garden
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -265,6 +369,8 @@ export function CaseStudy() {
             aspectClass = "aspect-square max-w-[500px]";
           } else if (section.aspectRatio === "16:9") {
             aspectClass = "aspect-[16/9] max-w-[840px]";
+          } else if (section.aspectRatio === "4:5") {
+            aspectClass = "aspect-[4/5] max-w-[420px]";
           }
 
           return (
@@ -294,10 +400,13 @@ export function CaseStudy() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-[40px] items-center">
                 {/* Media stage (focused item) */}
                 <div className="lg:col-span-7 flex justify-center items-center w-full">
-                  <div className={cn(
-                    "w-full rounded-2xl overflow-hidden bg-[#0a0a0a] border border-divider/15 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.8)] relative group",
-                    aspectClass
-                  )}>
+                  <div 
+                    className={cn(
+                      "w-full rounded-2xl overflow-hidden bg-[#0a0a0a] border border-divider/15 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.8)] relative group",
+                      aspectClass
+                    )}
+                    style={{ aspectRatio: section.aspectRatio ? section.aspectRatio.replace(":", "/") : "16/9" }}
+                  >
                     {isDirectVideo ? (
                       <video 
                         src={section.mediaUrl}
@@ -331,7 +440,7 @@ export function CaseStudy() {
                           title={section.title}
                         ></iframe>
                       </>
-                    ) : section.type === "photography" || (section.mediaUrl && section.mediaUrl.trim().startsWith("[")) ? (
+                    ) : section.type === "photography" || section.type === "graphics" || (section.mediaUrl && section.mediaUrl.trim().startsWith("[")) ? (
                       <PhotographyCarousel 
                         mediaUrl={section.mediaUrl}
                         aspectRatio={section.aspectRatio}
@@ -394,7 +503,10 @@ export function CaseStudy() {
                   {processedSections.map((otherSec, index) => {
                     const originalIndexInStudy = study.sections?.indexOf(otherSec);
                     const isSelf = originalIndexInStudy === focusedIndex;
-                    const cleanOther = cleanAndExtractMediaUrl(otherSec.mediaUrl);
+                    const cleanOtherRaw = cleanAndExtractMediaUrl(otherSec.mediaUrl);
+                    const cleanOther = cleanOtherRaw.trim().startsWith("[") 
+                      ? getFirstPhotoOrUrl(cleanOtherRaw) 
+                      : cleanOtherRaw;
                     const isOtherVideo = cleanOther.startsWith("data:video/") || 
                                          /\.(mp4|webm|ogg|mov)(\?|$)/i.test(cleanOther);
 
@@ -494,6 +606,9 @@ export function CaseStudy() {
             } else if (section.aspectRatio === "16:9") {
               containerClasses = "w-full max-w-[560px] md:max-w-[640px] mx-auto lg:mx-0";
               aspectClass = "aspect-[16/9]";
+            } else if (section.aspectRatio === "4:5") {
+              containerClasses = "w-full max-w-[360px] md:max-w-[380px] mx-auto lg:mx-0";
+              aspectClass = "aspect-[4/5]";
             }
 
             return (
@@ -501,12 +616,15 @@ export function CaseStudy() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-[40px] items-center">
                   
                   {/* Media Block - Left Aligned */}
-                  <div className="flex lg:col-span-7 justify-start text-left">
-                    <div className={cn(
-                      "rounded-2xl overflow-hidden bg-divider/5 border border-divider/10 relative group shadow-2xl",
-                      containerClasses,
-                      aspectClass
-                    )}>
+                  <div className="lg:col-span-7 w-full text-left">
+                    <div 
+                      className={cn(
+                        "rounded-2xl overflow-hidden bg-divider/5 border border-divider/10 relative group shadow-2xl",
+                        containerClasses,
+                        aspectClass
+                      )}
+                      style={{ aspectRatio: section.aspectRatio ? section.aspectRatio.replace(":", "/") : "16/9" }}
+                    >
                       {isDirectVideo ? (
                         <video 
                           src={section.mediaUrl}
@@ -540,7 +658,7 @@ export function CaseStudy() {
                             title={section.title}
                           ></iframe>
                         </>
-                      ) : section.type === "photography" || (section.mediaUrl && section.mediaUrl.trim().startsWith("[")) ? (
+                      ) : section.type === "photography" || section.type === "graphics" || (section.mediaUrl && section.mediaUrl.trim().startsWith("[")) ? (
                         <PhotographyCarousel 
                           mediaUrl={section.mediaUrl}
                           aspectRatio={section.aspectRatio}
@@ -622,7 +740,9 @@ export function CaseStudy() {
                   ? "h-[88vh] aspect-[9/16]" 
                   : activeVideo.aspectRatio === "1:1" 
                     ? "w-[88vh] h-[88vh] max-w-[85vw] max-h-[85vh] aspect-square" 
-                    : "w-[85vw] aspect-[16/9] max-w-5xl"
+                    : activeVideo.aspectRatio === "4:5"
+                      ? "h-[88vh] aspect-[4/5] max-w-[85vw] max-h-[85vh]"
+                      : "w-[85vw] aspect-[16/9] max-w-5xl"
               )}
               onClick={(e) => e.stopPropagation()}
             >

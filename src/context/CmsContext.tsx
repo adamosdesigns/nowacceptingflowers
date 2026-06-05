@@ -16,7 +16,7 @@ import {
   onAuthStateChanged,
   User
 } from "firebase/auth";
-import { db, auth, handleFirestoreError, OperationType } from "../lib/firebase";
+import { db, defaultDb, auth, handleFirestoreError, OperationType } from "../lib/firebase";
 import { caseStudies as staticCaseStudies, CaseStudy } from "../data/caseStudies";
 
 interface CmsContextType {
@@ -30,6 +30,7 @@ interface CmsContextType {
   updateStudy: (slug: string, study: CaseStudy) => Promise<void>;
   deleteStudy: (slug: string) => Promise<void>;
   seedDynamicDatabase: () => Promise<void>;
+  quotaExceeded: boolean;
 }
 
 const CmsContext = createContext<CmsContextType | undefined>(undefined);
@@ -39,6 +40,7 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [quotaExceeded, setQuotaExceeded] = useState(false);
 
   // Monitor Auth Changes
   useEffect(() => {
@@ -54,22 +56,112 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  // Fetch Case Studies from Firestore
-  const fetchCaseStudies = async () => {
+  // Fetch Case Studies from Firestore with client-side caching to preserve quota
+  const fetchCaseStudies = async (forceRefetch = false) => {
+    const cacheKey = "naf_casestudies_cache";
+    const cacheTimeKey = "naf_casestudies_cache_time";
+    const cacheDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+    // Bypass client-side caching if forced, or if user is an administrator, or visiting /admin
+    const isAdminPath = typeof window !== "undefined" && window.location.pathname.includes("/admin");
+    const shouldBypassCache = forceRefetch || isAdmin || !!user || isAdminPath;
+
+    if (!shouldBypassCache) {
+      try {
+        const cachedData = localStorage.getItem(cacheKey);
+        const cachedTime = localStorage.getItem(cacheTimeKey);
+        if (cachedData && cachedTime) {
+          const age = Date.now() - parseInt(cachedTime, 10);
+          if (age < cacheDuration) {
+            console.log("Loading case studies from local client cache (saves Firestore reads)...");
+            setCaseStudies(JSON.parse(cachedData));
+            setLoading(false);
+            setQuotaExceeded(false);
+            return;
+          }
+        }
+      } catch (cacheErr) {
+        console.warn("Client cache read error:", cacheErr);
+      }
+    }
+
     setLoading(true);
     const path = "caseStudies";
     try {
       const q = query(collection(db, path), orderBy("order", "asc"));
-      const snapshot = await getDocs(q);
+      
+      // Enforce a strict 2.5s timeout on Firestore reads. If cellular signal is weak,
+      // if quota is depleted, or if an ad-blocker stalls the sockets, we fail fast to fallback static data.
+      const getDocsPromise = getDocs(q);
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error("Firestore fetch timed out (2.5s limit reached)")), 2500)
+      );
+      
+      const snapshot = await Promise.race([getDocsPromise, timeoutPromise]);
       
       if (snapshot.empty) {
-        // No case studies in Firestore yet! Let's auto-seed the static ones
-        console.log("Firestore case studies are empty. Bootstrapping with static data...");
-        await seedDatabase(staticCaseStudies);
-        // Refetch after seeding
-        const resyncedSnapshot = await getDocs(q);
-        const docs = resyncedSnapshot.docs.map(doc => doc.data() as CaseStudy);
-        setCaseStudies(docs);
+        // Checking the default database instance fallback to see if we can recover the user's projects
+        console.log("Designated Firestore database is empty. Checking default database instance fallback...");
+        let defaultDocs: CaseStudy[] = [];
+        try {
+          // Check caseStudies in defaultDb with a 1.5s timeout
+          const defaultQ = query(collection(defaultDb, "caseStudies"), orderBy("order", "asc"));
+          const defaultDocsPromise = getDocs(defaultQ);
+          const defaultTimeoutPromise = new Promise<never>((_, reject) => 
+            setTimeout(() => reject(new Error("Default DB fetch timed out (1.5s limit)")), 1500)
+          );
+          const defaultSnapshot = await Promise.race([defaultDocsPromise, defaultTimeoutPromise]);
+          
+          if (!defaultSnapshot.empty) {
+            defaultDocs = defaultSnapshot.docs.map(doc => doc.data() as CaseStudy);
+            console.log(`Found ${defaultDocs.length} projects in 'caseStudies' collection on the default database.`);
+          } else {
+            // Also fall back to "projects" collection in defaultDb, just in case
+            const projectsQ = query(collection(defaultDb, "projects"), orderBy("order", "asc"));
+            const projectsDocsPromise = getDocs(projectsQ);
+            const projectsTimeoutPromise = new Promise<never>((_, reject) => 
+              setTimeout(() => reject(new Error("Projects collection fetch timed out (1.5s limit)")), 1500)
+            );
+            const projectsSnapshot = await Promise.race([projectsDocsPromise, projectsTimeoutPromise]);
+            
+            if (!projectsSnapshot.empty) {
+              defaultDocs = projectsSnapshot.docs.map(doc => doc.data() as CaseStudy);
+              console.log(`Found ${defaultDocs.length} projects in 'projects' collection on the default database.`);
+            }
+          }
+        } catch (defaultDbErr) {
+          console.warn("Could not query default database for fallback:", defaultDbErr);
+        }
+
+        if (defaultDocs.length > 0) {
+          console.log(`Successfully recovered ${defaultDocs.length} projects from the default database! Automatically copying/migrating them to the newly designated database...`);
+          await seedDatabase(defaultDocs);
+          setCaseStudies(defaultDocs);
+          
+          // Save to cache
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(defaultDocs));
+            localStorage.setItem(cacheTimeKey, Date.now().toString());
+          } catch (e) {}
+        } else {
+          // No case studies in default database either! Let's auto-seed the static ones
+          console.log("No previous database records found. Bootstrapping designated database with default static data...");
+          await seedDatabase(staticCaseStudies);
+          // Refetch after seeding with a 2-second timeout
+          const resyncedPromise = getDocs(q);
+          const resyncedTimeout = new Promise<never>((_, reject) => 
+            setTimeout(() => reject(new Error("Resynced database fetch timed out (2.0s limit)")), 2000)
+          );
+          const resyncedSnapshot = await Promise.race([resyncedPromise, resyncedTimeout]);
+          const docs = resyncedSnapshot.docs.map(doc => doc.data() as CaseStudy);
+          setCaseStudies(docs);
+
+          // Save to cache
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(docs));
+            localStorage.setItem(cacheTimeKey, Date.now().toString());
+          } catch (e) {}
+        }
       } else {
         const docs = snapshot.docs.map(doc => doc.data() as CaseStudy);
         
@@ -98,9 +190,36 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         });
         
         setCaseStudies(migratedDocs);
+        setQuotaExceeded(false);
+
+        // Save to cache
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(migratedDocs));
+          localStorage.setItem(cacheTimeKey, Date.now().toString());
+        } catch (e) {}
       }
-    } catch (error) {
+    } catch (error: any) {
       console.warn("Firestore fetch failed, falling back to local static case studies:", error);
+      const errMsg = error?.message || String(error);
+      if (
+        errMsg.toLowerCase().includes("quota") ||
+        errMsg.toLowerCase().includes("exhausted") ||
+        error?.code === "resource-exhausted"
+      ) {
+        setQuotaExceeded(true);
+      }
+      
+      // Try to recover from local fallback cache even if expired since we are offline
+      try {
+        const cachedData = localStorage.getItem(cacheKey);
+        if (cachedData) {
+          console.log("Serving expired client cache as emergency offline fallback...");
+          setCaseStudies(JSON.parse(cachedData));
+          setLoading(false);
+          return;
+        }
+      } catch (cacheErr) {}
+
       // Fallback gracefully to static local files so the site never breaks
       setCaseStudies(staticCaseStudies);
     } finally {
@@ -136,7 +255,7 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
 
   const seedDynamicDatabase = async () => {
     await seedDatabase(staticCaseStudies);
-    await fetchCaseStudies();
+    await fetchCaseStudies(true);
   };
 
   // Google Login popup
@@ -259,7 +378,7 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         updatedAt: new Date().toISOString()
       };
       await setDoc(docRef, payload);
-      await fetchCaseStudies();
+      await fetchCaseStudies(true);
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, `${path}/${study.slug}`);
     }
@@ -276,7 +395,7 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         updatedAt: new Date().toISOString()
       };
       await setDoc(docRef, payload);
-      await fetchCaseStudies();
+      await fetchCaseStudies(true);
     } catch (error) {
       handleFirestoreError(error, OperationType.UPDATE, `${path}/${slug}`);
     }
@@ -288,7 +407,7 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
     try {
       const docRef = doc(db, path, slug);
       await deleteDoc(docRef);
-      await fetchCaseStudies();
+      await fetchCaseStudies(true);
     } catch (error) {
       handleFirestoreError(error, OperationType.DELETE, `${path}/${slug}`);
     }
@@ -305,7 +424,8 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
       createStudy,
       updateStudy,
       deleteStudy,
-      seedDynamicDatabase
+      seedDynamicDatabase,
+      quotaExceeded
     }}>
       {children}
     </CmsContext.Provider>

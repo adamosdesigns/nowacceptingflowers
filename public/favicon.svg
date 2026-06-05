@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <g transform="translate(128, 128)">
+    <!-- 5 organic rounded petals rotated around center -->
+    <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8"/>
+    <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(72)"/>
+    <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(144)"/>
+    <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(216)"/>
+    <path d="M 0,0 C -48,-45 -45,-105 0,-105 C 45,-105 48,-45 0,0" fill="#8E97E8" transform="rotate(288)"/>
+    <!-- Organic center merging circle -->
+    <circle cx="0" cy="0" r="48" fill="#8E97E8" />
+  </g>
+</svg>

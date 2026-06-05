@@ -47,15 +47,28 @@ export function Footer() {
               </nav>
             </div>
 
-            {/* Core Expertise (SEO) */}
+            {/* Core Expertise (SEO) - Changed to Capabilities */}
             <div className="flex flex-col gap-6 text-offwhite/60">
-              <h4 className="text-[13.33px] uppercase tracking-[0.2em] font-bold text-accent">Expertise</h4>
+              <h4 className="text-[13.33px] uppercase tracking-[0.2em] font-bold text-accent">Capabilities</h4>
               <ul className="flex flex-col gap-2 text-[15px] uppercase tracking-widest font-medium">
-                <li>Video Production</li>
-                <li>Brand Photography</li>
-                <li>Social Media</li>
-                <li>Creative Strategy</li>
-                <li>Web Design</li>
+                <li>
+                  <Link to="/portfolio" className="hover:text-offwhite transition-colors">Creative Strategy</Link>
+                </li>
+                <li>
+                  <Link to="/portfolio?filter=Video" className="hover:text-offwhite transition-colors">Video Production</Link>
+                </li>
+                <li>
+                  <Link to="/portfolio?filter=Brand Identity" className="hover:text-offwhite transition-colors">Brand Identity</Link>
+                </li>
+                <li>
+                  <Link to="/portfolio?filter=Websites" className="hover:text-offwhite transition-colors">Web Design</Link>
+                </li>
+                <li>
+                  <Link to="/portfolio?filter=Photography" className="hover:text-offwhite transition-colors">Photography</Link>
+                </li>
+                <li>
+                  <Link to="/portfolio?filter=Graphics" className="hover:text-offwhite transition-colors">Graphic Design</Link>
+                </li>
               </ul>
             </div>
 
@@ -148,15 +161,28 @@ export function Footer() {
             </nav>
           </div>
 
-          {/* Core Expertise (SEO) */}
+          {/* Core Expertise (SEO) - Changed to Capabilities */}
           <div className="flex flex-col gap-6 text-offwhite/60">
-            <h4 className="text-[13.33px] uppercase tracking-[0.2em] font-bold text-accent">Expertise</h4>
+            <h4 className="text-[13.33px] uppercase tracking-[0.2em] font-bold text-accent">Capabilities</h4>
             <ul className="flex flex-col gap-2 text-[15px] uppercase tracking-widest font-medium">
-              <li>Video Production</li>
-              <li>Brand Photography</li>
-              <li>Social Media</li>
-              <li>Creative Strategy</li>
-              <li>Web Design</li>
+              <li>
+                <Link to="/portfolio" className="hover:text-offwhite transition-colors">Creative Strategy</Link>
+              </li>
+              <li>
+                <Link to="/portfolio?filter=Video" className="hover:text-offwhite transition-colors">Video Production</Link>
+              </li>
+              <li>
+                <Link to="/portfolio?filter=Brand Identity" className="hover:text-offwhite transition-colors">Brand Identity</Link>
+              </li>
+              <li>
+                <Link to="/portfolio?filter=Websites" className="hover:text-offwhite transition-colors">Web Design</Link>
+              </li>
+              <li>
+                <Link to="/portfolio?filter=Photography" className="hover:text-offwhite transition-colors">Photography</Link>
+              </li>
+              <li>
+                <Link to="/portfolio?filter=Graphics" className="hover:text-offwhite transition-colors">Graphic Design</Link>
+              </li>
             </ul>
           </div>
 

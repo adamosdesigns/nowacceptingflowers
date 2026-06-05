@@ -61,7 +61,8 @@ export function AdminPortfolio() {
     createStudy, 
     updateStudy, 
     deleteStudy,
-    seedDynamicDatabase
+    seedDynamicDatabase,
+    quotaExceeded
   } = useCms();
 
   // Active Workspace Navigation Tab
@@ -85,7 +86,7 @@ export function AdminPortfolio() {
   const [delivTitle, setDelivTitle] = useState("");
   const [delivService, setDelivService] = useState("");
   const [delivType, setDelivType] = useState<"video" | "logo" | "website" | "menu" | "social" | "branding" | "photography" | "graphics">("video");
-  const [delivAspectRatio, setDelivAspectRatio] = useState<"16:9" | "9:16" | "1:1">("16:9");
+  const [delivAspectRatio, setDelivAspectRatio] = useState<"16:9" | "9:16" | "1:1" | "4:5">("16:9");
   const [delivMediaUrl, setDelivMediaUrl] = useState("");
   const [delivDescription, setDelivDescription] = useState("");
   const [photoUrlInput, setPhotoUrlInput] = useState("");
@@ -101,7 +102,7 @@ export function AdminPortfolio() {
     serviceName: string;
     description: string;
     type: "video" | "logo" | "website" | "menu" | "social" | "branding" | "photography" | "graphics";
-    aspectRatio: "16:9" | "9:16" | "1:1";
+    aspectRatio: "16:9" | "9:16" | "1:1" | "4:5";
     mediaUrl: string;
   } | null>(null);
 
@@ -511,7 +512,9 @@ export function AdminPortfolio() {
     setDelivType(type);
     if (type === "video") {
       setDelivAspectRatio("9:16"); // Reels, vertical
-    } else if (type === "branding" || type === "graphics" || type === "logo" || type === "social") {
+    } else if (type === "graphics") {
+      setDelivAspectRatio("4:5"); // Graphics portrait aspect
+    } else if (type === "branding" || type === "logo" || type === "social") {
       setDelivAspectRatio("1:1"); // Squares
     } else {
       setDelivAspectRatio("16:9"); // Wide screens
@@ -539,6 +542,30 @@ export function AdminPortfolio() {
           <p className="text-sm text-offwhite/60 leading-relaxed mb-8">
             This workspace provides dynamic database integration to update your portfolio case studies. Please sign in with an authorized account.
           </p>
+
+          {quotaExceeded && (
+            <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs rounded-xl font-mono text-left space-y-2 leading-relaxed">
+              <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-amber-400">
+                <Sparkles size={14} />
+                <span>Firestore Quota Limits Reached</span>
+              </div>
+              <p>
+                Your database projects are **completely safe** in Firestore, but Google's free-tier Spark plan daily read quota has been temporarily reached.
+              </p>
+              <p>
+                The site has automatically activated offline local fallback data to keep everything functional. Dynamic updates will resume as soon as Google resets the quota tomorrow.
+              </p>
+              <a
+                href="https://console.firebase.google.com/project/gen-lang-client-0727970567/firestore/databases/ai-studio-0effce24-db4a-453b-a18c-b007a7f36c03/data?openUpgradeDialog=true"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-accent hover:underline font-bold uppercase tracking-wider text-[10px]"
+              >
+                <span>View Live Database Console</span>
+                <ArrowRight size={10} />
+              </a>
+            </div>
+          )}
 
           {!user ? (
             <button
@@ -610,6 +637,32 @@ export function AdminPortfolio() {
             </button>
           </div>
         </div>
+
+        {quotaExceeded && (
+          <div className="mb-8 p-6 bg-amber-500/10 border border-amber-500/30 text-amber-200 text-sm rounded-2xl animate-fade font-mono flex flex-col gap-3">
+            <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-amber-400">
+              <Sparkles size={16} className="animate-pulse" />
+              <span>Google Firestore Daily Read Quota Limit Exceeded</span>
+            </div>
+            <p className="text-xs leading-relaxed text-offwhite/80">
+              Your customized projects and deliverables are <strong>completely safe and untouched</strong> in the database! However, because this Firebase instance runs on Google's free Spark plan, it has temporarily reached its daily API read limit (restored daily by Google).
+            </p>
+            <p className="text-xs leading-relaxed text-offwhite/80">
+              The application has automatically activated our high-fidelity offline fallback drafts to ensure the website remains online, beautifully presented, and fully functional for visitors. CMS controls and database saving operations will resume as soon as Google resets the quota tomorrow.
+            </p>
+            <div>
+              <a
+                href="https://console.firebase.google.com/project/gen-lang-client-0727970567/firestore/databases/ai-studio-0effce24-db4a-453b-a18c-b007a7f36c03/data?openUpgradeDialog=true"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline uppercase tracking-widest font-bold"
+              >
+                <span>View Live Database on Firebase Console</span>
+                <ArrowRight size={12} className="mt-0.5" />
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Dynamic Success Alert */}
         {successMsg && (
@@ -732,7 +785,9 @@ export function AdminPortfolio() {
                         let nextAspect = editingAsset.aspectRatio;
                         if (nextType === "video") {
                           nextAspect = "9:16";
-                        } else if (nextType === "branding" || nextType === "graphics" || nextType === "logo" || nextType === "social") {
+                        } else if (nextType === "graphics") {
+                          nextAspect = "4:5";
+                        } else if (nextType === "branding" || nextType === "logo" || nextType === "social") {
                           nextAspect = "1:1";
                         } else {
                           nextAspect = "16:9";
@@ -760,6 +815,7 @@ export function AdminPortfolio() {
                       <option value="16:9">Widescreen Theater (16:9)</option>
                       <option value="9:16">Portrait Focus (9:16)</option>
                       <option value="1:1">Classic Square (1:1)</option>
+                      <option value="4:5">Portrait Standard (4:5)</option>
                     </select>
                   </div>
                 </div>
@@ -780,11 +836,11 @@ export function AdminPortfolio() {
 
               {/* Column B: Media file link & upload */}
               <div className="lg:col-span-4 space-y-6">
-                {editingAsset.type === "photography" ? (
+                {editingAsset.type === "photography" || editingAsset.type === "graphics" ? (
                   <div className="p-4 bg-charcoal/60 border border-divider/20 rounded-xl space-y-4">
                     <div className="flex justify-between items-center pb-2 border-b border-divider/10">
                       <span className="text-[10px] font-mono text-accent uppercase tracking-widest font-bold">
-                        Photography Album ({parsePhotos(editingAsset.mediaUrl).length} Items)
+                        {editingAsset.type === "graphics" ? "Graphics Gallery" : "Photography Album"} ({parsePhotos(editingAsset.mediaUrl).length} Items)
                       </span>
                     </div>
 
@@ -917,7 +973,7 @@ export function AdminPortfolio() {
                         />
                         <div className="flex items-center gap-1.5 text-accent text-[9px] font-mono uppercase tracking-widest font-extrabold">
                           <Upload size={12} />
-                          <span>Upload Multi-Photos</span>
+                          <span>{editingAsset.type === "graphics" ? "Upload Multi-Graphics" : "Upload Multi-Photos"}</span>
                         </div>
                       </div>
                     </div>
@@ -1331,6 +1387,7 @@ export function AdminPortfolio() {
                       <option value="16:9">16:9 Cinema Landscape</option>
                       <option value="9:16">9:16 Tiktok / Vertical Story</option>
                       <option value="1:1">1:1 Square block</option>
+                      <option value="4:5">4:5 Portrait Feed Standard</option>
                     </select>
                   </div>
 
@@ -1338,8 +1395,8 @@ export function AdminPortfolio() {
                   <div className="bg-charcoal/40 border border-divider/10 rounded-xl p-3 flex flex-col justify-center text-center">
                     <span className="text-[9px] font-mono text-offwhite/30 uppercase tracking-widest block mb-1">PROPORTIONAL PREVIEW BOX</span>
                     <div className="mx-auto border border-accent/20 rounded bg-accent/5 flex items-center justify-center text-[10px] font-mono text-accent" style={{
-                      width: delivAspectRatio === "16:9" ? "64px" : delivAspectRatio === "9:16" ? "36px" : "48px",
-                      height: delivAspectRatio === "16:9" ? "36px" : delivAspectRatio === "9:16" ? "64px" : "48px",
+                      width: delivAspectRatio === "16:9" ? "64px" : delivAspectRatio === "9:16" ? "36px" : delivAspectRatio === "4:5" ? "38px" : "48px",
+                      height: delivAspectRatio === "16:9" ? "36px" : delivAspectRatio === "9:16" ? "64px" : delivAspectRatio === "4:5" ? "48px" : "48px",
                     }}>
                       {delivAspectRatio}
                     </div>
@@ -1347,11 +1404,11 @@ export function AdminPortfolio() {
                 </div>
 
                 {/* Media assets setup: Direct URL paste combined with File Pick Base64 encoding */}
-                {delivType === "photography" ? (
+                {delivType === "photography" || delivType === "graphics" ? (
                   <div className="p-4 bg-charcoal/60 border border-divider/20 rounded-xl space-y-4">
                     <div className="flex justify-between items-center pb-2 border-b border-divider/10">
                       <span className="text-[10px] font-mono text-accent uppercase tracking-widest font-bold">
-                        Photography Album ({parsePhotos(delivMediaUrl).length} Items)
+                        {delivType === "graphics" ? "Graphics Gallery" : "Photography Album"} ({parsePhotos(delivMediaUrl).length} Items)
                       </span>
                     </div>
 
@@ -1480,7 +1537,7 @@ export function AdminPortfolio() {
                         />
                         <div className="flex items-center gap-1.5 text-accent text-[9px] font-mono uppercase tracking-widest font-extrabold">
                           <Upload size={12} />
-                          <span>Upload Multi-Photos</span>
+                          <span>{delivType === "graphics" ? "Upload Multi-Graphics" : "Upload Multi-Photos"}</span>
                         </div>
                       </div>
                     </div>

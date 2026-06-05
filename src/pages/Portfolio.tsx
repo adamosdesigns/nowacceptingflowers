@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useCms } from "../context/CmsContext";
 import { motion, AnimatePresence } from "motion/react";
 import { CaseStudy } from "../data/caseStudies";
@@ -63,7 +63,16 @@ export function matchesSectionCategory(section: any, category: string): boolean 
 
 export function Portfolio() {
   const { caseStudies, loading } = useCms();
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeCategory = searchParams.get("filter") || "All";
+
+  const setActiveCategory = (category: string) => {
+    if (category === "All") {
+      setSearchParams({});
+    } else {
+      setSearchParams({ filter: category });
+    }
+  };
 
   // Filter unique client case studies matching active category
   const filteredStudies = useMemo(() => {

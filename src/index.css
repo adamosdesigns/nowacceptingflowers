@@ -87,6 +87,15 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .aspect-\[4\/5\] {
+    aspect-ratio: 4 / 5 !important;
+  }
+  .aspect-\[9\/16\] {
+    aspect-ratio: 9 / 16 !important;
+  }
+  .aspect-\[16\/9\] {
+    aspect-ratio: 16 / 9 !important;
+  }
 }
 
 /* Ensure default cursors are hidden ONLY on hover-capable desktop screens */
