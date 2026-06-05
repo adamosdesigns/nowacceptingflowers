@@ -189,7 +189,7 @@ export function CaseStudy() {
 
   if (loading) {
     return (
-      <div className="fixed top-[88px] lg:top-[116px] bottom-0 left-0 right-0 z-40 pb-[88px] lg:pb-[116px] bg-charcoal flex flex-col items-center justify-center text-center p-6 text-offwhite selection:bg-accent selection:text-charcoal overflow-hidden">
+      <div className="w-full pt-[80px] pb-[80px] px-6 bg-charcoal flex flex-col items-center justify-center text-center text-offwhite selection:bg-accent selection:text-charcoal min-h-[55vh]">
         <div className="flex flex-col items-center max-w-sm gap-6">
           <motion.div
             animate={{ rotate: 360 }}
@@ -222,7 +222,7 @@ export function CaseStudy() {
 
   if (!study) {
     return (
-      <div className="fixed top-[88px] lg:top-[116px] bottom-0 left-0 right-0 z-40 pb-[88px] lg:pb-[116px] bg-charcoal flex flex-col items-center justify-center text-center p-6 text-offwhite selection:bg-accent selection:text-charcoal animate-fade-in overflow-hidden">
+      <div className="w-full pt-[80px] pb-[80px] px-6 bg-charcoal flex flex-col items-center justify-center text-center text-offwhite selection:bg-accent selection:text-charcoal animate-fade-in min-h-[55vh]">
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
