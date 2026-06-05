@@ -222,18 +222,18 @@ export function CaseStudy() {
 
   if (!study) {
     return (
-      <div className="min-h-screen bg-charcoal flex flex-col items-center justify-center text-center p-6 text-offwhite selection:bg-accent selection:text-charcoal">
+      <div className="min-h-screen bg-charcoal flex flex-col items-center justify-center text-center p-6 text-offwhite selection:bg-accent selection:text-charcoal animate-fade-in">
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center max-w-md gap-8"
+          className="flex flex-col items-center max-w-3xl lg:max-w-4xl w-full gap-8"
         >
           {/* Standing Flower Pot/Stem Minimalist Illustration */}
-          <div className="relative w-24 h-24 flex items-center justify-center">
+          <div className="relative w-20 h-20 flex items-center justify-center mb-2">
             <motion.div
               animate={{ 
                 scale: [1, 1.05, 1],
-                rotate: [0, 5, -5, 0]
+                rotate: [0, 4, -4, 0]
               }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
               className="w-16 h-16"
@@ -249,25 +249,13 @@ export function CaseStudy() {
                 </g>
               </svg>
             </motion.div>
-            
-            {/* Subtle sparkling elements */}
-            <motion.div 
-              animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
-              transition={{ repeat: Infinity, duration: 3, delay: 0.5 }}
-              className="absolute top-1 right-2 text-accent"
-            >
-              <Sparkles className="w-4 h-4" />
-            </motion.div>
           </div>
 
-          <div className="space-y-4">
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent font-bold block animate-pulse">
-              Sprouting in the Greenhouse
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bebas uppercase tracking-wide text-offwhite leading-[0.9]">
+          <div className="space-y-4 w-full">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[76px] font-bebas uppercase tracking-normal text-offwhite leading-none whitespace-normal select-none">
               THIS PAGE HASN’T SPROUTED YET
             </h1>
-            <p className="text-sm text-offwhite/60 font-sans font-light leading-relaxed max-w-sm mx-auto text-balance">
+            <p className="text-xs sm:text-sm text-offwhite/50 font-sans font-light tracking-wide leading-relaxed max-w-md mx-auto text-balance">
               Head back to our portfolio to explore our recent work.
             </p>
           </div>
