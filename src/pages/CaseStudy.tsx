@@ -261,24 +261,30 @@ export function CaseStudy() {
           </div>
 
           <div className="space-y-4">
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent font-bold block">
+            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent font-bold block animate-pulse">
               Sprouting in the Greenhouse
             </span>
             <h1 className="text-4xl md:text-5xl font-bebas uppercase tracking-wide text-offwhite leading-[0.9]">
-              A Budding Concept is Unfolding
+              THIS PAGE HASN’T SPROUTED YET
             </h1>
             <p className="text-sm text-offwhite/60 font-sans font-light leading-relaxed max-w-sm mx-auto text-balance">
-              Our digital greenhouse is still cultivating this specific showcase. If this petal is taking a moment to bloom, feel free to wander back and explore our fully-grown gallery garden.
+              Head back to our portfolio to explore our recent work.
             </p>
           </div>
 
-          <div className="pt-2">
+          <div className="flex flex-col sm:flex-row gap-4 items-center pt-2">
             <Link 
               to="/portfolio" 
               className="inline-flex items-center gap-2 bg-accent text-charcoal px-8 py-4 rounded-xl text-xs uppercase tracking-widest font-bold hover:bg-white hover:text-charcoal transition-all duration-300 group"
             >
-              Explore the Project Garden
+              VIEW MORE WORK
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link 
+              to="/contact" 
+              className="inline-flex items-center gap-2 border border-offwhite/20 hover:border-accent hover:bg-accent hover:text-charcoal text-offwhite px-8 py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition-all duration-300"
+            >
+              CONTACT US
             </Link>
           </div>
         </motion.div>
